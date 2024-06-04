@@ -62,26 +62,42 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:neurox/components/game_card.dart';
 import 'package:neurox/pages/game_settings.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Drill Generator'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingsPage()),
-            );
-          },
-          child: Text('Drill Einstellungen'),
+        appBar: AppBar(
+          title: Text('NEUROX'),
         ),
-      ),
-    );
+        body: Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
+              },
+              child: GameCard(title: "Drill Generator"),
+            ),
+          ],
+        ))
+        // body: Center(
+        //   child: ElevatedButton(
+        //     onPressed: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => SettingsPage()),
+        //       );
+        //     },
+        //     child: Text('Drill Einstellungen'),
+        //   ),
+        // ),
+        );
   }
 }

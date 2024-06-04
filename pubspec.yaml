@@ -1,10 +1,10 @@
 name: neurox
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: '>=3.4.1 <4.0.0'
+  sdk: ">=3.4.1 <4.0.0"
 
 dependencies:
   bloc: ^8.1.4
@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   flutter_animate: ^4.5.0
   flutter_bloc: ^8.1.5
+
   url_launcher: ^6.2.6
 
 dev_dependencies:

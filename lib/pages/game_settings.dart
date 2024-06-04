@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neurox/pages/drill.dart';
+import 'package:neurox/pages/presets_page.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -9,6 +10,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   List<String> colors = ['Rot', 'Blau', 'Grün', 'Gelb'];
   List<String> directions = ['↑', '↓', '←', '→', '↖', '↗', '↙', '↘'];
+  //preset values for the sliders
   Duration interval = Duration(seconds: 1);
   Duration duration = Duration(seconds: 10);
   List<String> selectedColors = [];
@@ -19,11 +21,35 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Drill Einstellungen'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.star),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PresetsPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: <Widget>[
+            //placeholder for image
+            Container(
+              width: 400,
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.grey[500],
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text("Kurze Beschreibung des Spiels"),
+            const SizedBox(height: 20),
+
             Text('Farben auswählen:'),
             Wrap(
               spacing: 8.0,
@@ -45,23 +71,32 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             SizedBox(height: 20),
             Text('Pfeilrichtungen auswählen:'),
-            Wrap(
-              spacing: 8.0,
-              children: directions.map((direction) {
-                return FilterChip(
-                  label: Text(direction),
-                  selected: selectedDirections.contains(direction),
-                  onSelected: (bool selected) {
-                    setState(() {
-                      if (selected) {
-                        selectedDirections.add(direction);
-                      } else {
-                        selectedDirections.remove(direction);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
+            Column(
+              children: <Widget>[
+                Wrap(
+                  direction: Axis.horizontal,
+                  spacing: 0.0,
+                  runSpacing: 2.0,
+                  children: directions.map((direction) {
+                    return Container(
+                      width: MediaQuery.of(context).size.width / 4 - 8,
+                      child: FilterChip(
+                        label: Text(direction),
+                        selected: selectedDirections.contains(direction),
+                        onSelected: (bool selected) {
+                          setState(() {
+                            if (selected) {
+                              selectedDirections.add(direction);
+                            } else {
+                              selectedDirections.remove(direction);
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
             SizedBox(height: 20),
             Text('Intervall:'),
@@ -115,7 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 );
               },
-              child: const Text('Continue'),
+              child: const Text('Weiter'),
             ),
           ],
         ),
