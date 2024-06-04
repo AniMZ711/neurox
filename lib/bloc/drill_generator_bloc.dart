@@ -93,14 +93,8 @@ class DrillBloc extends Bloc<DrillEvent, DrillState> {
       String direction = '';
 
       if (event.colors.isNotEmpty && event.directions.isNotEmpty) {
-        if (_random.nextBool()) {
-          color = event.colors[_random.nextInt(event.colors.length)];
-          direction = '';
-        } else {
-          color = '';
-          direction =
-              event.directions[_random.nextInt(event.directions.length)];
-        }
+        color = event.colors[_random.nextInt(event.colors.length)];
+        direction = event.directions[_random.nextInt(event.directions.length)];
       } else if (event.colors.isNotEmpty) {
         color = event.colors[_random.nextInt(event.colors.length)];
         direction = '';

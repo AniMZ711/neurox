@@ -20,6 +20,18 @@ class DrillPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => DrillBloc(),
       child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              context.read<DrillBloc>().add(StopDrill());
+              Navigator.pop(context);
+            },
+          ),
+        ),
         body: Stack(
           children: [
             BlocListener<DrillBloc, DrillState>(
@@ -101,36 +113,6 @@ class DrillPage extends StatelessWidget {
                 },
               ),
             ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.pause),
-                    onPressed: () {
-                      // TODO: Implement pause functionality
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.play_arrow),
-                    onPressed: () {
-                      // TODO: Implement play functionality
-                    },
-                  ),
-                ],
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    context.read<DrillBloc>().add(StopDrill());
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -148,12 +130,17 @@ class DrillPage extends StatelessWidget {
       case 'gelb':
         return Colors.yellow;
       default:
-        return Colors.white;
+        try {
+          return Color(
+              int.parse(colorName.split('(0x')[1].split(')')[0], radix: 16));
+        } catch (e) {
+          return Colors.white;
+        }
     }
   }
 
   Widget _getDirectionIcon(String direction) {
-    IconData iconData;
+    IconData? iconData;
     switch (direction) {
       case '↑':
         iconData = Icons.arrow_upward;
@@ -180,12 +167,23 @@ class DrillPage extends StatelessWidget {
         iconData = Icons.south_east;
         break;
       default:
-        return Container(); // Return an empty container when no direction is provided
+        try {
+          iconData = IconData(
+              int.parse(direction.split('(0x')[1].split(')')[0], radix: 16),
+              fontFamily: 'MaterialIcons');
+          return Icon(
+            iconData,
+            size: 100.0,
+            color: Colors.white,
+          );
+        } catch (e) {
+          return Container();
+        }
     }
     return Icon(
       iconData,
       size: 100.0,
-      color: const Color.fromARGB(255, 14, 14, 14),
+      color: Colors.white,
     );
   }
 }
