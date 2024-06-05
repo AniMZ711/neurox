@@ -30,6 +30,8 @@ class StartDrill extends DrillEvent {
 
 class StopDrill extends DrillEvent {}
 
+class PauseDrill extends DrillEvent {}
+
 class UpdateDrill extends DrillEvent {
   final String color;
   final String direction;
@@ -60,6 +62,13 @@ class DrillRunning extends DrillState {
   List<Object> get props => [color, direction];
 }
 
+class DrillPaused extends DrillState {
+  const DrillPaused();
+
+  @override
+  List<Object> get props => [];
+}
+
 class DrillStopped extends DrillState {
   final String message;
 
@@ -74,15 +83,26 @@ class DrillBloc extends Bloc<DrillEvent, DrillState> {
   Timer? _timer;
   Timer? _durationTimer;
   final Random _random = Random();
+  bool _isRunning = false;
 
   DrillBloc() : super(DrillInitial()) {
     on<StartDrill>(_onStartDrill);
     on<StopDrill>(_onStopDrill);
     on<UpdateDrill>(_onUpdateDrill);
+    on<PauseDrill>(_onPauseDrill);
+  }
+
+  Future<void> _onPauseDrill(PauseDrill event, Emitter<DrillState> emit) async {
+    print('PauseDrill event received');
+    _isRunning = false;
+    _timer?.cancel();
+    _durationTimer?.cancel();
+    emit(DrillPaused());
   }
 
   Future<void> _onStartDrill(StartDrill event, Emitter<DrillState> emit) async {
     print('StartDrill event received');
+    _isRunning = false;
     _timer?.cancel();
     _durationTimer?.cancel();
 
@@ -95,7 +115,14 @@ class DrillBloc extends Bloc<DrillEvent, DrillState> {
         : '';
     emit(DrillRunning(color: initialColor, direction: initialDirection));
 
+    _isRunning = true;
+
     _timer = Timer.periodic(event.interval, (timer) {
+      if (!_isRunning) {
+        timer.cancel();
+        return;
+      }
+
       final color = event.colors.isNotEmpty
           ? event.colors[_random.nextInt(event.colors.length)]
           : '';
@@ -104,17 +131,22 @@ class DrillBloc extends Bloc<DrillEvent, DrillState> {
           : '';
       print(
           'Dispatching UpdateDrill event with color: $color and direction: $direction');
-      add(UpdateDrill(color: color, direction: direction));
+      if (_isRunning) {
+        add(UpdateDrill(color: color, direction: direction));
+      }
     });
 
     _durationTimer = Timer(event.duration, () {
-      print('Drill duration ended, stopping drill');
-      add(StopDrill());
+      if (_isRunning) {
+        print('Drill duration ended, stopping drill');
+        add(StopDrill());
+      }
     });
   }
 
   Future<void> _onStopDrill(StopDrill event, Emitter<DrillState> emit) async {
     print('StopDrill event received');
+    _isRunning = false;
     _timer?.cancel();
     _durationTimer?.cancel();
     emit(DrillStopped());
@@ -122,6 +154,16 @@ class DrillBloc extends Bloc<DrillEvent, DrillState> {
 
   Future<void> _onUpdateDrill(
       UpdateDrill event, Emitter<DrillState> emit) async {
-    emit(DrillRunning(color: event.color, direction: event.direction));
+    if (_isRunning) {
+      emit(DrillRunning(color: event.color, direction: event.direction));
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _isRunning = false;
+    _timer?.cancel();
+    _durationTimer?.cancel();
+    return super.close();
   }
 }

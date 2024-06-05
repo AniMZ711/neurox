@@ -26,11 +26,8 @@ class DrillPage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.pause),
               onPressed: () {
-                //TODO: Implement pause functionalit
-
-                // if (context.read<DrillBloc>().state is DrillRunning) {
-                //   context.read<DrillBloc>().add();
-                // }
+                print("Please pause");
+                context.read<DrillBloc>().add(StopDrill());
               },
             ),
             IconButton(
