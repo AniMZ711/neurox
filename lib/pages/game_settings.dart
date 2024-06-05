@@ -37,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: <Widget>[
-            //placeholder for image
+            // Placeholder for image
             Container(
               width: 400,
               height: 200,
@@ -66,6 +66,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       }
                     });
                   },
+                  selectedColor: Colors.cyan, // Selected color for FilterChip
+                  checkmarkColor: Colors.white, // Color for the checkmark
                 );
               }).toList(),
             ),
@@ -92,6 +94,9 @@ class _SettingsPageState extends State<SettingsPage> {
                             }
                           });
                         },
+                        selectedColor:
+                            Colors.cyan, // Selected color for FilterChip
+                        checkmarkColor: Colors.white, // Color for the checkmark
                       ),
                     );
                   }).toList(),
@@ -100,39 +105,85 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             SizedBox(height: 20),
             Text('Intervall:'),
-            Slider(
-              value: interval.inMilliseconds.toDouble(),
-              min: 500, // Minimum interval of 0.5 seconds
-              max: 5000, // Maximum interval of 5 seconds
-              divisions: 9, // Steps of 0.5 seconds
-              label:
-                  '${(interval.inMilliseconds / 1000).toStringAsFixed(1)} Sekunden',
-              onChanged: (value) {
-                setState(() {
-                  interval = Duration(milliseconds: value.toInt());
-                });
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('0.5s'), // Minimum value
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: Colors.cyan, // Active track color
+                      inactiveTrackColor:
+                          Colors.white.withOpacity(0.3), // Inactive track color
+                      thumbColor: Colors.cyan, // Thumb color
+                      overlayColor: Colors.cyan.withAlpha(32), // Overlay color
+                    ),
+                    child: Slider(
+                      value: interval.inMilliseconds.toDouble(),
+                      min: 500, // Minimum interval of 0.5 seconds
+                      max: 5000, // Maximum interval of 5 seconds
+                      divisions: 9, // Steps of 0.5 seconds
+                      label:
+                          '${(interval.inMilliseconds / 1000).toStringAsFixed(1)} Sekunden',
+                      onChanged: (value) {
+                        setState(() {
+                          interval = Duration(milliseconds: value.toInt());
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                Text('5s'), // Maximum value
+              ],
             ),
             const Text('Dauer:'),
-            Slider(
-              value: duration.inSeconds.toDouble(),
-              min: 10,
-              max: 120,
-              divisions: 22,
-              label: '${duration.inSeconds} Sekunden',
-              onChanged: (value) {
-                setState(() {
-                  duration = Duration(seconds: value.toInt());
-                });
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('10s'), // Minimum value
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: Colors.cyan, // Active track color
+                      inactiveTrackColor:
+                          Colors.white.withOpacity(0.3), // Inactive track color
+                      thumbColor: Colors.cyan, // Thumb color
+                      overlayColor: Colors.cyan.withAlpha(32), // Overlay color
+                    ),
+                    child: Slider(
+                      value: duration.inSeconds.toDouble(),
+                      min: 5,
+                      max: 120,
+                      divisions: 22,
+                      label: '${duration.inSeconds} Sekunden',
+                      onChanged: (value) {
+                        setState(() {
+                          duration = Duration(seconds: value.toInt());
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                Text('120s'), // Maximum value
+              ],
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    Colors.white, // Set the background color to blue
+                foregroundColor:
+                    Colors.blueGrey[600], // Set the text color to white
+              ),
               onPressed: () {
                 if (selectedColors.isEmpty && selectedDirections.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
-                          'Bitte wählen Sie mindestens eine Farbe oder eine Richtung aus.'),
+                        'Bitte wählen Sie mindestens eine Farbe oder eine Richtung aus.',
+                        style: TextStyle(
+                            color: Colors
+                                .white), // Ensure the snack bar text is white
+                      ),
                     ),
                   );
                   return;

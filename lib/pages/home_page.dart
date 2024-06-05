@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:neurox/components/background.dart';
 import 'package:neurox/components/game_card.dart';
-import 'package:neurox/components/navbar.dart';
 import 'package:neurox/pages/game_settings.dart';
-import 'package:neurox/pages/gameinfo_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -38,53 +37,55 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('NEUROX', style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title:
+              const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text('NEUROX',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+            Icon(Icons.psychology_sharp)
+          ])),
+      body: Stack(
+        children: [
+          StandardBackground(child: Container()), // Background layer
+          SafeArea(
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 80), // Add space for AppBar
+                  const Text(
+                    "Let's start training!",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.normal,
+                      color:
+                          Colors.white, // Ensure text is visible on background
+                    ),
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _navigateToGameSettings(context, "Drill Generator");
+                    },
+                    child: GameCard(title: "Drill Generator"),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _navigateToGameSettings(context, "Reaction");
+                    },
+                    child: GameCard(title: "Reaction"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
-      body: Center(
-        child: Column(children: <Widget>[
-          Text("Lets start training!",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          SizedBox(
-            height: 50,
-          ),
-          GestureDetector(
-            onTap: () {
-              _navigateToGameSettings(context, "Drill Generator");
-            },
-            child: GameCard(title: "Drill Generator"),
-          ),
-          GestureDetector(
-            onTap: () {
-              _navigateToGameSettings(context, "Reaction");
-            },
-            child: GameCard(title: "Reaction"),
-          ),
-        ]),
-      ),
-      // bottomNavigationBar: NavigationBar(
-      //   labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-      //   onDestinationSelected: _onDestinationSelected,
-      //   indicatorColor: Colors.cyan,
-      //   selectedIndex: currentPageIndex,
-      //   destinations: const <Widget>[
-      //     NavigationDestination(
-      //       selectedIcon: Icon(Icons.home),
-      //       icon: Icon(Icons.home_outlined),
-      //       label: 'Home',
-      //     ),
-      //     NavigationDestination(
-      //       selectedIcon: Icon(Icons.search),
-      //       icon: Icon(Icons.search_outlined),
-      //       label: 'Suche',
-      //     ),
-      //     NavigationDestination(
-      //       selectedIcon: Icon(Icons.settings),
-      //       icon: Icon(Icons.settings_outlined),
-      //       label: 'Einstellungen',
-      //     ),
-      //   ],
-      // ),
     );
   }
 }

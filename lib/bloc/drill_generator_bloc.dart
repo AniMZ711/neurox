@@ -86,29 +86,23 @@ class DrillBloc extends Bloc<DrillEvent, DrillState> {
     _timer?.cancel();
     _durationTimer?.cancel();
 
-    emit(DrillInitial());
+    // Emit initial state immediately
+    final initialColor = event.colors[_random.nextInt(event.colors.length)];
+    final initialDirection =
+        event.directions[_random.nextInt(event.directions.length)];
+    emit(DrillRunning(color: initialColor, direction: initialDirection));
 
+    // Schedule the periodic updates
     _timer = Timer.periodic(event.interval, (timer) {
-      String color = '';
-      String direction = '';
-
-      if (event.colors.isNotEmpty && event.directions.isNotEmpty) {
-        color = event.colors[_random.nextInt(event.colors.length)];
-        direction = event.directions[_random.nextInt(event.directions.length)];
-      } else if (event.colors.isNotEmpty) {
-        color = event.colors[_random.nextInt(event.colors.length)];
-        direction = '';
-      } else if (event.directions.isNotEmpty) {
-        color = '';
-        direction = event.directions[_random.nextInt(event.directions.length)];
-      }
-
+      final color = event.colors[_random.nextInt(event.colors.length)];
+      final direction =
+          event.directions[_random.nextInt(event.directions.length)];
       print(
           'Dispatching UpdateDrill event with color: $color and direction: $direction');
-      add(UpdateDrill(
-          color: color, direction: direction)); // Use add instead of emit
+      add(UpdateDrill(color: color, direction: direction));
     });
 
+    // Schedule the end of the drill
     _durationTimer = Timer(event.duration, () {
       print('Drill duration ended, stopping drill');
       add(StopDrill());

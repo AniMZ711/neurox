@@ -22,12 +22,24 @@ class GameCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Center(
-          child: Text(
-        title.toUpperCase(),
-        style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Color.fromARGB(255, 52, 52, 52)),
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Image.network(
+            'https://cdn-icons-png.flaticon.com/512/53/53286.png',
+            width: 60,
+            height: 60,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(height: 10),
+          Text(
+            title.toUpperCase(),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Color.fromARGB(255, 52, 52, 52)),
+          )
+        ],
       )),
     );
   }

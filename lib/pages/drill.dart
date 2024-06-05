@@ -22,6 +22,26 @@ class DrillPage extends StatelessWidget {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.pause),
+              onPressed: () {
+                // TODO: Implement pause functionality
+                // if (context.read<DrillBloc>().state is DrillRunning) {
+                //   context.read<DrillBloc>().add();
+                // }
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.restart_alt_outlined),
+              onPressed: () {
+                // TODO: Implement restart functionality
+                // if (context.read<DrillBloc>().state is DrillRunning) {
+                //   context.read<DrillBloc>().add();
+                // }
+              },
+            ),
+          ],
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
@@ -77,7 +97,9 @@ class DrillPage extends StatelessWidget {
                 builder: (context, state) {
                   if (state is DrillInitial) {
                     return Center(
-                      child: ElevatedButton(
+                      child: IconButton(
+                        icon: const Icon(Icons.play_circle_outline_outlined,
+                            size: 80),
                         onPressed: () {
                           context.read<DrillBloc>().add(StartDrill(
                                 colors: colors,
@@ -86,7 +108,6 @@ class DrillPage extends StatelessWidget {
                                 duration: duration,
                               ));
                         },
-                        child: Text('Start Drill'),
                       ),
                     );
                   } else if (state is DrillRunning) {
