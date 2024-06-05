@@ -87,15 +87,21 @@ class DrillBloc extends Bloc<DrillEvent, DrillState> {
     _durationTimer?.cancel();
 
     // Emit initial state immediately
-    final initialColor = event.colors[_random.nextInt(event.colors.length)];
-    final initialDirection =
-        event.directions[_random.nextInt(event.directions.length)];
+    final initialColor = event.colors.isNotEmpty
+        ? event.colors[_random.nextInt(event.colors.length)]
+        : '';
+    final initialDirection = event.directions.isNotEmpty
+        ? event.directions[_random.nextInt(event.directions.length)]
+        : '';
     emit(DrillRunning(color: initialColor, direction: initialDirection));
 
     _timer = Timer.periodic(event.interval, (timer) {
-      final color = event.colors[_random.nextInt(event.colors.length)];
-      final direction =
-          event.directions[_random.nextInt(event.directions.length)];
+      final color = event.colors.isNotEmpty
+          ? event.colors[_random.nextInt(event.colors.length)]
+          : '';
+      final direction = event.directions.isNotEmpty
+          ? event.directions[_random.nextInt(event.directions.length)]
+          : '';
       print(
           'Dispatching UpdateDrill event with color: $color and direction: $direction');
       add(UpdateDrill(color: color, direction: direction));
