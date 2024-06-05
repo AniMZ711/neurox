@@ -26,7 +26,8 @@ class DrillPage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.pause),
               onPressed: () {
-                // TODO: Implement pause functionality
+                //TODO: Implement pause functionalit
+
                 // if (context.read<DrillBloc>().state is DrillRunning) {
                 //   context.read<DrillBloc>().add();
                 // }
@@ -35,7 +36,8 @@ class DrillPage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.restart_alt_outlined),
               onPressed: () {
-                // TODO: Implement restart functionality
+                //TODO: Implement pause functionality
+
                 // if (context.read<DrillBloc>().state is DrillRunning) {
                 //   context.read<DrillBloc>().add();
                 // }
@@ -123,8 +125,7 @@ class DrillPage extends StatelessWidget {
                     );
                   } else if (state is DrillStopped) {
                     return Center(
-                      child: Text(state
-                          .message), // Display the message from DrillStopped state
+                      child: Text(state.message),
                     );
                   } else {
                     return Center(

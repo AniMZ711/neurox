@@ -92,7 +92,6 @@ class DrillBloc extends Bloc<DrillEvent, DrillState> {
         event.directions[_random.nextInt(event.directions.length)];
     emit(DrillRunning(color: initialColor, direction: initialDirection));
 
-    // Schedule the periodic updates
     _timer = Timer.periodic(event.interval, (timer) {
       final color = event.colors[_random.nextInt(event.colors.length)];
       final direction =
@@ -102,7 +101,6 @@ class DrillBloc extends Bloc<DrillEvent, DrillState> {
       add(UpdateDrill(color: color, direction: direction));
     });
 
-    // Schedule the end of the drill
     _durationTimer = Timer(event.duration, () {
       print('Drill duration ended, stopping drill');
       add(StopDrill());
