@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neurox/bloc/drill_generator_bloc.dart';
+import 'package:neurox/logic/drill_cubit.dart';
+import 'package:neurox/logic/drill_state.dart';
+import 'package:neurox/logic/timer_cubit.dart';
+import 'package:neurox/logic/timer_state.dart';
 
 class DrillPage extends StatelessWidget {
   final List<String> colors;
@@ -15,127 +18,98 @@ class DrillPage extends StatelessWidget {
     required this.duration,
   });
 
+  bool _isButtonPressed = false;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => DrillBloc(),
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
+    return BlocBuilder<DrillCubit, DrillState>(builder: (context, state) {
+      return Scaffold(
+        backgroundColor: state.color,
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back), // Use arrow back icon for back button
+            onPressed: () {
+              _isButtonPressed = false;
+              context.read<TimerCubit>().resetTimer();
+              Navigator.pop(context); // Go back to the previous screen
+            },
+          ),
           actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.pause),
-              onPressed: () {
-                print("Please pause");
-                context.read<DrillBloc>().add(StopDrill());
+            BlocBuilder<TimerCubit, TimerState>(
+              builder: (context, timerState) {
+                IconData icon;
+                if (timerState is TimerRunning) {
+                  icon = Icons.pause;
+                } else if (timerState is TimerPaused) {
+                  icon = Icons.play_arrow;
+                } else {
+                  icon = Icons.timer;
+                }
+
+                return IconButton(
+                  icon: Icon(icon),
+                  onPressed: () {
+                    if (timerState is TimerInitial ||
+                        timerState is TimerCompleted) {
+                      context
+                          .read<TimerCubit>()
+                          .startTimer(duration.inSeconds, interval);
+                    } else if (timerState is TimerRunning) {
+                      context.read<TimerCubit>().pauseTimer();
+                    } else if (timerState is TimerPaused) {
+                      context.read<TimerCubit>().resumeTimer();
+                    }
+                  },
+                );
               },
             ),
             IconButton(
-              icon: const Icon(Icons.restart_alt_outlined),
+              icon: Icon(Icons.refresh), // Use refresh icon for reset
               onPressed: () {
-                //TODO: Implement pause functionality
-
-                // if (context.read<DrillBloc>().state is DrillRunning) {
-                //   context.read<DrillBloc>().add();
-                // }
+                _isButtonPressed = false;
+                context.read<TimerCubit>().resetTimer();
               },
             ),
           ],
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              context.read<DrillBloc>().add(StopDrill());
-              Navigator.pop(context);
-            },
-          ),
         ),
-        body: Stack(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            BlocListener<DrillBloc, DrillState>(
-              listener: (context, state) {
-                if (state is DrillStopped) {
-                  // Show a message with two buttons when the drill ends
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Drill beendet'),
-                        content:
-                            Text('Der Drill ist zu Ende. Was möchten Sie tun?'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context); // Close the dialog
-                              Navigator.pop(
-                                  context); // Navigate back to the settings page
-                            },
-                            child: Text('Home'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context); // Close the dialog
-                              context.read<DrillBloc>().add(StartDrill(
-                                    colors: colors,
-                                    directions: directions,
-                                    interval: interval,
-                                    duration: duration,
-                                  ));
-                            },
-                            child: Text('Drill neu starten'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              child: BlocBuilder<DrillBloc, DrillState>(
-                builder: (context, state) {
-                  if (state is DrillInitial) {
-                    return Center(
-                      child: IconButton(
-                        icon: const Icon(Icons.play_circle_outline_outlined,
-                            size: 80),
-                        onPressed: () {
-                          context.read<DrillBloc>().add(StartDrill(
-                                colors: colors,
-                                directions: directions,
-                                interval: interval,
-                                duration: duration,
-                              ));
-                        },
-                      ),
-                    );
-                  } else if (state is DrillRunning) {
-                    return Container(
-                      color: state.color.isEmpty
-                          ? Colors.white
-                          : _getColor(state.color),
-                      child: Center(
-                        child: state.direction.isEmpty
-                            ? Container()
-                            : _getDirectionIcon(state.direction),
-                      ),
-                    );
-                  } else if (state is DrillStopped) {
-                    return Center(
-                      child: Text(state.message),
-                    );
+            Center(
+              child: BlocBuilder<TimerCubit, TimerState>(
+                builder: (context, timerState) {
+                  if (timerState is TimerRunning || _isButtonPressed) {
+                    return Container(); // return an empty container when timer is running or button has been pressed
                   } else {
-                    return Center(
-                      child: Text('Unbekannter Zustand'),
+                    return ElevatedButton(
+                      onPressed: () {
+                        _isButtonPressed = true;
+                        context
+                            .read<TimerCubit>()
+                            .startTimer(duration.inSeconds, interval);
+                      },
+                      child: Icon(Icons.play_arrow), // Use play arrow icon
                     );
                   }
                 },
               ),
             ),
+            BlocBuilder<TimerCubit, TimerState>(
+              builder: (context, timerState) {
+                return Column(
+                  children: [
+                    if (timerState is TimerRunning) ...[
+                      Text('Tick count: ${timerState.tickCount}'),
+                    ] else if (timerState is TimerPaused) ...[
+                      Text('Tick count: ${timerState.tickCount}'),
+                    ],
+                  ],
+                );
+              },
+            ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   Color _getColor(String colorName) {

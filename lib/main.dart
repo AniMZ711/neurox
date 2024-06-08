@@ -33,7 +33,9 @@
 // }
 
 import 'package:flutter/material.dart';
-import 'package:neurox/bloc/drill_generator_bloc.dart';
+import 'package:neurox/logic/drill_cubit.dart';
+import 'package:neurox/logic/timer_cubit.dart';
+
 import 'package:neurox/pages/home_page.dart';
 import 'package:neurox/pages/search_page.dart';
 import 'package:neurox/pages/settings_page.dart';
@@ -50,7 +52,9 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<DrillBloc>(create: (context) => DrillBloc()),
+          BlocProvider(create: (context) => DrillCubit()),
+          BlocProvider(
+              create: (context) => TimerCubit(context.read<DrillCubit>())),
         ],
         child: MaterialApp(
           home: MyHomePage(),
