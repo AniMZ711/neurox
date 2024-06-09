@@ -19,164 +19,143 @@ class DrillPage extends StatelessWidget {
   });
 
   bool _isButtonPressed = false;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DrillCubit, DrillState>(builder: (context, state) {
-      return Scaffold(
-        backgroundColor: state.color,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back), // Use arrow back icon for back button
-            onPressed: () {
-              _isButtonPressed = false;
-              context.read<TimerCubit>().resetTimer();
-              Navigator.pop(context); // Go back to the previous screen
-            },
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => DrillCubit(
+                selectedColors: colors, selectedDirections: directions),
           ),
-          actions: <Widget>[
-            BlocBuilder<TimerCubit, TimerState>(
-              builder: (context, timerState) {
-                IconData icon;
-                if (timerState is TimerRunning) {
-                  icon = Icons.pause;
-                } else if (timerState is TimerPaused) {
-                  icon = Icons.play_arrow;
-                } else {
-                  icon = Icons.timer;
-                }
-
-                return IconButton(
-                  icon: Icon(icon),
-                  onPressed: () {
-                    if (timerState is TimerInitial ||
-                        timerState is TimerCompleted) {
-                      context
-                          .read<TimerCubit>()
-                          .startTimer(duration.inSeconds, interval);
-                    } else if (timerState is TimerRunning) {
-                      context.read<TimerCubit>().pauseTimer();
-                    } else if (timerState is TimerPaused) {
-                      context.read<TimerCubit>().resumeTimer();
-                    }
-                  },
-                );
-              },
+          BlocProvider(
+            create: (context) => TimerCubit(
+              context.read<DrillCubit>(),
             ),
-            IconButton(
-              icon: Icon(Icons.refresh), // Use refresh icon for reset
+          ),
+        ],
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon:
+                  Icon(Icons.arrow_back), // Use arrow back icon for back button
               onPressed: () {
                 _isButtonPressed = false;
                 context.read<TimerCubit>().resetTimer();
+                Navigator.pop(context); // Go back to the previous screen
               },
             ),
-          ],
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: BlocBuilder<TimerCubit, TimerState>(
+            actions: <Widget>[
+              BlocBuilder<TimerCubit, TimerState>(
                 builder: (context, timerState) {
-                  if (timerState is TimerRunning || _isButtonPressed) {
-                    return Container(); // return an empty container when timer is running or button has been pressed
+                  IconData icon;
+                  if (timerState is TimerRunning) {
+                    icon = Icons.pause;
+                  } else if (timerState is TimerPaused) {
+                    icon = Icons.play_arrow;
                   } else {
-                    return ElevatedButton(
-                      onPressed: () {
-                        _isButtonPressed = true;
+                    icon = Icons.timer;
+                  }
+
+                  return IconButton(
+                    icon: Icon(icon),
+                    onPressed: () {
+                      if (timerState is TimerInitial ||
+                          timerState is TimerCompleted) {
                         context
                             .read<TimerCubit>()
                             .startTimer(duration.inSeconds, interval);
-                      },
-                      child: Icon(Icons.play_arrow), // Use play arrow icon
-                    );
-                  }
+                      } else if (timerState is TimerRunning) {
+                        context.read<TimerCubit>().pauseTimer();
+                      } else if (timerState is TimerPaused) {
+                        context.read<TimerCubit>().resumeTimer();
+                      }
+                    },
+                  );
                 },
               ),
-            ),
-            BlocBuilder<TimerCubit, TimerState>(
-              builder: (context, timerState) {
-                return Column(
-                  children: [
-                    if (timerState is TimerRunning) ...[
-                      Text('Tick count: ${timerState.tickCount}'),
-                    ] else if (timerState is TimerPaused) ...[
-                      Text('Tick count: ${timerState.tickCount}'),
-                    ],
-                  ],
-                );
-              },
-            ),
-          ],
+              IconButton(
+                icon: Icon(Icons.refresh), // Use refresh icon for reset
+                onPressed: () {
+                  _isButtonPressed = false;
+                  context.read<TimerCubit>().resetTimer();
+                },
+              ),
+            ],
+          ),
+          body: BlocBuilder<DrillCubit, DrillState>(
+            builder: (context, state) {
+              return Container(
+                  color: state.color,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: BlocBuilder<TimerCubit, TimerState>(
+                            builder: (context, timerState) {
+                              if (timerState is TimerRunning ||
+                                  _isButtonPressed) {
+                                return Container(
+                                    child: Icon(_getDirectionIcon(state
+                                        .direction))); // return an empty container when timer is running or button has been pressed
+                              } else {
+                                return ElevatedButton(
+                                  onPressed: () {
+                                    _isButtonPressed = true;
+                                    context.read<TimerCubit>().startTimer(
+                                        duration.inSeconds, interval);
+                                  },
+                                  child: Icon(Icons.play_arrow),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        BlocBuilder<TimerCubit, TimerState>(
+                          builder: (context, timerState) {
+                            return Column(
+                              children: [
+                                if (timerState is TimerRunning) ...[
+                                  Text('Tick count: ${timerState.tickCount}'),
+                                ] else if (timerState is TimerPaused) ...[
+                                  Text('Tick count: ${timerState.tickCount}'),
+                                ],
+                              ],
+                            );
+                          },
+                        ),
+                      ]));
+            },
+          ),
         ),
       );
     });
   }
+}
 
-  Color _getColor(String colorName) {
-    switch (colorName.toLowerCase()) {
-      case 'rot':
-        return Colors.red;
-      case 'blau':
-        return Colors.blue;
-      case 'grün':
-        return Colors.green;
-      case 'gelb':
-        return Colors.yellow;
-      default:
-        try {
-          return Color(
-              int.parse(colorName.split('(0x')[1].split(')')[0], radix: 16));
-        } catch (e) {
-          return Colors.white;
-        }
-    }
-  }
-
-  Widget _getDirectionIcon(String direction) {
-    IconData? iconData;
-    switch (direction) {
-      case '↑':
-        iconData = Icons.arrow_upward;
-        break;
-      case '↓':
-        iconData = Icons.arrow_downward;
-        break;
-      case '←':
-        iconData = Icons.arrow_back;
-        break;
-      case '→':
-        iconData = Icons.arrow_forward;
-        break;
-      case '↖':
-        iconData = Icons.north_west;
-        break;
-      case '↗':
-        iconData = Icons.north_east;
-        break;
-      case '↙':
-        iconData = Icons.south_west;
-        break;
-      case '↘':
-        iconData = Icons.south_east;
-        break;
-      default:
-        try {
-          iconData = IconData(
-              int.parse(direction.split('(0x')[1].split(')')[0], radix: 16),
-              fontFamily: 'MaterialIcons');
-          return Icon(
-            iconData,
-            size: 100.0,
-            color: Colors.white,
-          );
-        } catch (e) {
-          return Container();
-        }
-    }
-    return Icon(
-      iconData,
-      size: 100.0,
-      color: Colors.white,
-    );
+IconData _getDirectionIcon(String direction) {
+  switch (direction) {
+    case '↑':
+      return Icons.arrow_upward;
+    case '↓':
+      return Icons.arrow_downward;
+    case '←':
+      return Icons.arrow_back;
+    case '→':
+      return Icons.arrow_forward;
+    case '↖':
+      return Icons.north_west;
+    case '↗':
+      return Icons.north_east;
+    case '↙':
+      return Icons.south_west;
+    case '↘':
+      return Icons.south_east;
+    default:
+      return Icons
+          .help; // return a default icon if the direction is not recognized
   }
 }
