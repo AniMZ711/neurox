@@ -11,15 +11,25 @@ class DrillCubit extends Cubit<DrillState> {
   final _random = Random();
 
   DrillCubit({this.selectedColors, this.selectedDirections})
-      : super(DrillState(count: 0, color: Colors.white, direction: '')) {
+      : super(DrillState(count: 0, color: Colors.black, direction: '')) {
     colors = selectedColors?.map(_getColor).toList() ?? [];
   }
   void increment() {
+    String direction = '';
+
+    if (selectedDirections != null && selectedDirections!.isNotEmpty) {
+      direction =
+          selectedDirections![_random.nextInt(selectedDirections!.length)];
+    }
+
+    Color color = colors.isNotEmpty
+        ? colors[_random.nextInt(colors.length)]
+        : Colors.black;
+
     emit(DrillState(
       count: state.count + 1,
-      direction:
-          selectedDirections![_random.nextInt(selectedDirections!.length)],
-      color: colors[_random.nextInt(colors.length)],
+      direction: direction,
+      color: color,
     ));
   }
 

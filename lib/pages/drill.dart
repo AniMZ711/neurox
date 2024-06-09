@@ -99,8 +99,10 @@ class DrillPage extends StatelessWidget {
                               if (timerState is TimerRunning ||
                                   _isButtonPressed) {
                                 return Container(
-                                    child: Icon(_getDirectionIcon(state
-                                        .direction))); // return an empty container when timer is running or button has been pressed
+                                  child: Icon(
+                                      _getDirectionIcon(state.direction),
+                                      size: 200),
+                                ); // return an empty container when timer is running or button has been pressed
                               } else {
                                 return ElevatedButton(
                                   onPressed: () {
@@ -136,7 +138,7 @@ class DrillPage extends StatelessWidget {
   }
 }
 
-IconData _getDirectionIcon(String direction) {
+IconData? _getDirectionIcon(String direction) {
   switch (direction) {
     case '↑':
       return Icons.arrow_upward;
@@ -155,7 +157,6 @@ IconData _getDirectionIcon(String direction) {
     case '↘':
       return Icons.south_east;
     default:
-      return Icons
-          .help; // return a default icon if the direction is not recognized
+      return null;
   }
 }
