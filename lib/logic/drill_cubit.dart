@@ -7,30 +7,39 @@ class DrillCubit extends Cubit<DrillState> {
   final List<String>? selectedColors;
   final List<String>? selectedDirections;
   late List<Color> colors;
+  final bool showWhiteScreen;
 
   final _random = Random();
+  bool _showWhite = false;
 
-  DrillCubit({this.selectedColors, this.selectedDirections})
+  DrillCubit(
+      {this.selectedColors,
+      this.selectedDirections,
+      this.showWhiteScreen = false})
       : super(DrillState(count: 0, color: Colors.black, direction: '')) {
     colors = selectedColors?.map(_getColor).toList() ?? [];
   }
   void increment() {
-    String direction = '';
+    if (showWhiteScreen && !_showWhite) {
+      emit(DrillState(
+          count: state.count + 1, color: Colors.white, direction: ''));
+      _showWhite = true;
+    } else {
+      String direction = '';
 
-    if (selectedDirections != null && selectedDirections!.isNotEmpty) {
-      direction =
-          selectedDirections![_random.nextInt(selectedDirections!.length)];
+      if (selectedDirections != null && selectedDirections!.isNotEmpty) {
+        direction =
+            selectedDirections![_random.nextInt(selectedDirections!.length)];
+      }
+
+      Color color = colors.isNotEmpty
+          ? colors[_random.nextInt(colors.length)]
+          : Colors.black;
+
+      emit(DrillState(
+          count: state.count + 1, direction: direction, color: color));
+      _showWhite = false;
     }
-
-    Color color = colors.isNotEmpty
-        ? colors[_random.nextInt(colors.length)]
-        : Colors.black;
-
-    emit(DrillState(
-      count: state.count + 1,
-      direction: direction,
-      color: color,
-    ));
   }
 
   void reset() {

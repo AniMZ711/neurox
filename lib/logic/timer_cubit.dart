@@ -15,6 +15,7 @@ class TimerCubit extends Cubit<TimerState> {
   void startTimer(int tickCountLimit, Duration duration) {
     _tickCount = 0;
     emit(TimerRunning(_tickCount));
+    drillCubit.increment();
     _startTicker(tickCountLimit, duration);
   }
 

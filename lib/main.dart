@@ -67,7 +67,8 @@ class MainApp extends StatelessWidget {
             primarySwatch: Colors.cyan,
             brightness: Brightness.dark,
           ),
-          themeMode: ThemeMode.dark, // Use system theme (dark or light)
+          themeMode: ThemeMode.dark,
+          debugShowCheckedModeBanner: false, // Use system theme (dark or light)
         ));
   }
 }

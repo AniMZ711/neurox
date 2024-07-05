@@ -10,12 +10,14 @@ class DrillPage extends StatelessWidget {
   final List<String> directions;
   final Duration interval;
   final Duration duration;
+  final bool showWhiteScreen;
 
   DrillPage({
     required this.colors,
     required this.directions,
     required this.interval,
     required this.duration,
+    this.showWhiteScreen = false,
   });
 
   bool _isButtonPressed = false;
@@ -27,7 +29,9 @@ class DrillPage extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => DrillCubit(
-                selectedColors: colors, selectedDirections: directions),
+                selectedColors: colors,
+                selectedDirections: directions,
+                showWhiteScreen: showWhiteScreen),
           ),
           BlocProvider(
             create: (context) => TimerCubit(
@@ -38,8 +42,7 @@ class DrillPage extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              icon:
-                  Icon(Icons.arrow_back), // Use arrow back icon for back button
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 _isButtonPressed = false;
                 context.read<TimerCubit>().resetTimer();
@@ -76,7 +79,7 @@ class DrillPage extends StatelessWidget {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.refresh), // Use refresh icon for reset
+                icon: Icon(Icons.refresh),
                 onPressed: () {
                   _isButtonPressed = false;
                   context.read<TimerCubit>().resetTimer();
@@ -93,6 +96,18 @@ class DrillPage extends StatelessWidget {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Center(
+                        //     child: Column(
+                        //         mainAxisAlignment: MainAxisAlignment.center,
+                        //         children: [
+                        //       Text('Ausgewählte Farben: ${colors.join(', ')}'),
+                        //       Text(
+                        //           'Ausgewählte Richtungen: ${directions.join(', ')}'),
+                        //       Text(
+                        //           "Dauer des Intervalles: ${interval.inSeconds} Sekunden"),
+                        //       Text(
+                        //           "Dauer des Drills: ${duration.inSeconds} Sekunden"),
+                        //     ])),
                         Center(
                           child: BlocBuilder<TimerCubit, TimerState>(
                             builder: (context, timerState) {
@@ -119,14 +134,14 @@ class DrillPage extends StatelessWidget {
                         BlocBuilder<TimerCubit, TimerState>(
                           builder: (context, timerState) {
                             return Column(
-                              children: [
-                                if (timerState is TimerRunning) ...[
-                                  Text('Tick count: ${timerState.tickCount}'),
-                                ] else if (timerState is TimerPaused) ...[
-                                  Text('Tick count: ${timerState.tickCount}'),
-                                ],
-                              ],
-                            );
+                                // children: [
+                                //   if (timerState is TimerRunning) ...[
+                                //     Text('Tick count: ${timerState.tickCount}'),
+                                //   ] else if (timerState is TimerPaused) ...[
+                                //     Text('Tick count: ${timerState.tickCount}'),
+                                //   ],
+                                // ],
+                                );
                           },
                         ),
                       ]));

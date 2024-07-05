@@ -74,12 +74,12 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: GameCard(title: "Drill Generator"),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _navigateToGameSettings(context, "Reaction");
-                    },
-                    child: GameCard(title: "Reaction"),
-                  ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     _navigateToGameSettings(context, "Reaction");
+                  //   },
+                  //   child: GameCard(title: "Reaction"),
+                  // ),
                 ],
               ),
             ),
