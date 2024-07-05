@@ -1,23 +1,133 @@
 import 'package:flutter/material.dart';
 import 'package:neurox/pages/drill.dart';
 import 'package:neurox/pages/presets_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class SettingsPage extends StatefulWidget {
+  final Map<String, dynamic>? preset;
+
+  SettingsPage({this.preset});
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  //values for the filter chips
   List<String> colors = ['Rot', 'Blau', 'Grün', 'Gelb'];
   List<String> directions = ['↑', '↓', '←', '→', '↖', '↗', '↙', '↘'];
-  //preset values for the sliders
   Duration interval = const Duration(seconds: 1);
   Duration duration = const Duration(seconds: 10);
-  //chosen values for the filter chips
   List<String> selectedColors = [];
   List<String> selectedDirections = [];
   bool showWhiteScreen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.preset != null) {
+      selectedColors = List<String>.from(widget.preset!['selectedColors']);
+      selectedDirections =
+          List<String>.from(widget.preset!['selectedDirections']);
+      interval = Duration(milliseconds: widget.preset!['interval']);
+      duration = Duration(seconds: widget.preset!['duration']);
+      showWhiteScreen = widget.preset!['showWhiteScreen'];
+    }
+  }
+
+  Future<void> _savePreset(String presetName) async {
+    final prefs = await SharedPreferences.getInstance();
+    final preset = {
+      'selectedColors': selectedColors,
+      'selectedDirections': selectedDirections,
+      'interval': interval.inMilliseconds,
+      'duration': duration.inSeconds,
+      'showWhiteScreen': showWhiteScreen,
+    };
+    final presets = prefs.getStringList('presets') ?? [];
+    if (!presets.contains(presetName)) {
+      presets.add(presetName);
+      await prefs.setStringList('presets', presets);
+    }
+    await prefs.setString('preset_$presetName', jsonEncode(preset));
+  }
+
+  Future<void> _showSavePresetDialog() async {
+    final TextEditingController controller = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Bennene deine Übung'),
+          content: TextField(
+            controller: controller,
+            cursorColor: Colors.cyan,
+            decoration: const InputDecoration(
+              hintText: "Name der Übung",
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.cyan),
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Abbrechen',
+                  style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Adjust the value as needed
+                ),
+              ),
+              onPressed: () {
+                if (controller.text.isNotEmpty) {
+                  _savePreset(controller.text);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Übung in Presets gespeichert',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  );
+
+                  Navigator.of(context).pop();
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Achtung'),
+                        content: const Text(
+                            'Du musst deiner Übung einen Namen geben.'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('OK',
+                                style: TextStyle(color: Colors.cyan)),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+              child: const Text('Speichern',
+                  style: TextStyle(color: Colors.blueGrey)),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +135,30 @@ class _SettingsPageState extends State<SettingsPage> {
         appBar: AppBar(
           title: const Text('Drill Einstellungen'),
           actions: <Widget>[
-            IconButton(icon: Icon(Icons.save_as_rounded), onPressed: () {}),
+            IconButton(
+              icon: const Icon(Icons.save_as_rounded),
+              onPressed: () {
+                _showSavePresetDialog();
+              },
+            ),
             IconButton(
               icon: Icon(Icons.star),
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                final result = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => PresetsPage()),
                 );
+                if (result != null) {
+                  setState(() {
+                    selectedColors =
+                        List<String>.from(result['selectedColors']);
+                    selectedDirections =
+                        List<String>.from(result['selectedDirections']);
+                    interval = Duration(milliseconds: result['interval']);
+                    duration = Duration(seconds: result['duration']);
+                    showWhiteScreen = result['showWhiteScreen'];
+                  });
+                }
               },
             ),
           ],
@@ -42,7 +168,6 @@ class _SettingsPageState extends State<SettingsPage> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: <Widget>[
-                // Placeholder for image
                 Container(
                   width: 400,
                   height: 200,
@@ -54,7 +179,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 const SizedBox(height: 20),
                 const Text("Generiere individuelle Drill-Übungen"),
                 const SizedBox(height: 20),
-
                 const Text('Farben auswählen:'),
                 Wrap(
                   spacing: 0.0,
@@ -74,15 +198,13 @@ class _SettingsPageState extends State<SettingsPage> {
                               }
                             });
                           },
-                          selectedColor:
-                              Colors.cyan, // Selected color for FilterChip
-                          checkmarkColor:
-                              Colors.white, // Color for the checkmark
+                          selectedColor: Colors.cyan,
+                          checkmarkColor: Colors.white,
                         ));
                   }).toList(),
                 ),
-                SizedBox(height: 20),
-                Text('Pfeilrichtungen auswählen:'),
+                const SizedBox(height: 20),
+                const Text('Pfeilrichtungen auswählen:'),
                 Column(
                   children: <Widget>[
                     Wrap(
@@ -104,10 +226,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 }
                               });
                             },
-                            selectedColor:
-                                Colors.cyan, // Selected color for FilterChip
-                            checkmarkColor:
-                                Colors.white, // Color for the checkmark
+                            selectedColor: Colors.cyan,
+                            checkmarkColor: Colors.white,
                           ),
                         );
                       }).toList(),
@@ -115,27 +235,24 @@ class _SettingsPageState extends State<SettingsPage> {
                   ],
                 ),
                 SizedBox(height: 20),
-
                 Text('Intervall:'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('0.5s'), // Minimum value
+                    Text('0.5s'),
                     Expanded(
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: Colors.cyan, // Active track color
-                          inactiveTrackColor: Colors.white
-                              .withOpacity(0.3), // Inactive track color
-                          thumbColor: Colors.cyan, // Thumb color
-                          overlayColor:
-                              Colors.cyan.withAlpha(32), // Overlay color
+                          activeTrackColor: Colors.cyan,
+                          inactiveTrackColor: Colors.white.withOpacity(0.3),
+                          thumbColor: Colors.cyan,
+                          overlayColor: Colors.cyan.withAlpha(32),
                         ),
                         child: Slider(
                           value: interval.inMilliseconds.toDouble(),
-                          min: 500, // Minimum interval of 0.5 seconds
-                          max: 5000, // Maximum interval of 5 seconds
-                          divisions: 9, // Steps of 0.5 seconds
+                          min: 500,
+                          max: 5000,
+                          divisions: 9,
                           label:
                               '${(interval.inMilliseconds / 1000).toStringAsFixed(1)} Sekunden',
                           onChanged: (value) {
@@ -146,23 +263,21 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                     ),
-                    Text('5s'), // Maximum value
+                    Text('5s'),
                   ],
                 ),
                 const Text('Dauer:'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('10s'), // Minimum value
+                    Text('10s'),
                     Expanded(
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: Colors.cyan, // Active track color
-                          inactiveTrackColor: Colors.white
-                              .withOpacity(0.3), // Inactive track color
-                          thumbColor: Colors.cyan, // Thumb color
-                          overlayColor:
-                              Colors.cyan.withAlpha(32), // Overlay color
+                          activeTrackColor: Colors.cyan,
+                          inactiveTrackColor: Colors.white.withOpacity(0.3),
+                          thumbColor: Colors.cyan,
+                          overlayColor: Colors.cyan.withAlpha(32),
                         ),
                         child: Slider(
                           value: duration.inSeconds.toDouble(),
@@ -178,16 +293,20 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                     ),
-                    Text('120s'), // Maximum value
+                    Text('120s'),
                   ],
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ExpansionTile(
                     title: const Text('Trainer Einstellungen'),
+                    collapsedIconColor: Colors.cyan,
+                    iconColor: Colors.white,
                     children: <Widget>[
                       SwitchListTile(
                         title: const Text('Weißer Zwischenscreen'),
                         value: showWhiteScreen,
+                        activeTrackColor: Colors.cyan,
+                        activeColor: Colors.white,
                         onChanged: (bool value) {
                           setState(() {
                             showWhiteScreen = value;
@@ -195,8 +314,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         },
                       ),
                     ]),
-                SizedBox(height: 20),
-
+                const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -208,9 +326,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         const SnackBar(
                           content: Text(
                             'Bitte wählen Sie mindestens eine Farbe oder eine Richtung aus.',
-                            style: TextStyle(
-                                color: Colors
-                                    .white), // Ensure the snack bar text is white
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       );
@@ -232,9 +348,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                   child: const Text('Weiter'),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
