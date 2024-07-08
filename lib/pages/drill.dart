@@ -79,7 +79,7 @@ class DrillPage extends StatelessWidget {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.refresh),
+                icon: const Icon(Icons.refresh),
                 onPressed: () {
                   _isButtonPressed = false;
                   context.read<TimerCubit>().resetTimer();
@@ -96,18 +96,6 @@ class DrillPage extends StatelessWidget {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Center(
-                        //     child: Column(
-                        //         mainAxisAlignment: MainAxisAlignment.center,
-                        //         children: [
-                        //       Text('Ausgewählte Farben: ${colors.join(', ')}'),
-                        //       Text(
-                        //           'Ausgewählte Richtungen: ${directions.join(', ')}'),
-                        //       Text(
-                        //           "Dauer des Intervalles: ${interval.inSeconds} Sekunden"),
-                        //       Text(
-                        //           "Dauer des Drills: ${duration.inSeconds} Sekunden"),
-                        //     ])),
                         Center(
                           child: BlocBuilder<TimerCubit, TimerState>(
                             builder: (context, timerState) {
@@ -117,32 +105,36 @@ class DrillPage extends StatelessWidget {
                                   child: Icon(
                                       _getDirectionIcon(state.direction),
                                       size: 200),
-                                ); // return an empty container when timer is running or button has been pressed
-                              } else {
-                                return ElevatedButton(
-                                  onPressed: () {
-                                    _isButtonPressed = true;
-                                    context.read<TimerCubit>().startTimer(
-                                        duration.inSeconds, interval);
-                                  },
-                                  child: Icon(Icons.play_arrow),
                                 );
+                              } else {
+                                return Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                          "Starte den Drill, sobald du bereit bist!",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.white)),
+                                      const SizedBox(height: 20),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.grey,
+                                          shape: StadiumBorder(),
+                                        ),
+                                        onPressed: () {
+                                          _isButtonPressed = true;
+                                          context.read<TimerCubit>().startTimer(
+                                              duration.inSeconds, interval);
+                                        },
+                                        child: const Icon(
+                                          Icons.play_arrow,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    ]);
                               }
                             },
                           ),
-                        ),
-                        BlocBuilder<TimerCubit, TimerState>(
-                          builder: (context, timerState) {
-                            return Column(
-                                // children: [
-                                //   if (timerState is TimerRunning) ...[
-                                //     Text('Tick count: ${timerState.tickCount}'),
-                                //   ] else if (timerState is TimerPaused) ...[
-                                //     Text('Tick count: ${timerState.tickCount}'),
-                                //   ],
-                                // ],
-                                );
-                          },
                         ),
                       ]));
             },

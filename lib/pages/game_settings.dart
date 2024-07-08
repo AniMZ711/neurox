@@ -134,6 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Drill Einstellungen'),
+          centerTitle: true,
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.save_as_rounded),
@@ -184,7 +185,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   spacing: 0.0,
                   runSpacing: 2.0,
                   children: colors.map((color) {
-                    return Container(
+                    return SizedBox(
                         width: MediaQuery.of(context).size.width / 4 - 8,
                         child: FilterChip(
                           label: Text(color),
@@ -212,7 +213,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       spacing: 0.0,
                       runSpacing: 2.0,
                       children: directions.map((direction) {
-                        return Container(
+                        return SizedBox(
                           width: MediaQuery.of(context).size.width / 4 - 8,
                           child: FilterChip(
                             label: Text(direction),
@@ -234,19 +235,23 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-                Text('Intervall:'),
+                const SizedBox(height: 20),
+                const Text('Intervall:'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('0.5s'),
+                    const Text('0.5s'),
                     Expanded(
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           activeTrackColor: Colors.cyan,
                           inactiveTrackColor: Colors.white.withOpacity(0.3),
-                          thumbColor: Colors.cyan,
+                          thumbColor: Colors.white,
                           overlayColor: Colors.cyan.withAlpha(32),
+                          valueIndicatorTextStyle: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          valueIndicatorColor: Colors.blueGrey,
                         ),
                         child: Slider(
                           value: interval.inMilliseconds.toDouble(),
@@ -263,20 +268,20 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                     ),
-                    Text('5s'),
+                    const Text('5s'),
                   ],
                 ),
                 const Text('Dauer:'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('10s'),
+                    const Text('10s'),
                     Expanded(
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           activeTrackColor: Colors.cyan,
                           inactiveTrackColor: Colors.white.withOpacity(0.3),
-                          thumbColor: Colors.cyan,
+                          thumbColor: Colors.white,
                           overlayColor: Colors.cyan.withAlpha(32),
                         ),
                         child: Slider(
