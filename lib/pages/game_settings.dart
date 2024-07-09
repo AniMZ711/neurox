@@ -16,6 +16,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   List<String> colors = ['Rot', 'Blau', 'Grün', 'Gelb'];
   List<String> directions = ['↑', '↓', '←', '→', '↖', '↗', '↙', '↘'];
+  // default values for interval and duration
   Duration interval = const Duration(seconds: 1);
   Duration duration = const Duration(seconds: 10);
   List<String> selectedColors = [];
@@ -143,7 +144,7 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             IconButton(
-              icon: Icon(Icons.star),
+              icon: const Icon(Icons.star),
               onPressed: () async {
                 final result = await Navigator.push(
                   context,
@@ -176,6 +177,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     color: Colors.grey[500],
                     borderRadius: BorderRadius.circular(10),
                   ),
+                  child: const Icon(Icons.image, size: 100),
                 ),
                 const SizedBox(height: 20),
                 const Text("Generiere individuelle Drill-Übungen"),
@@ -298,7 +300,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                     ),
-                    Text('120s'),
+                    const Text('120s'),
                   ],
                 ),
                 const SizedBox(height: 20),

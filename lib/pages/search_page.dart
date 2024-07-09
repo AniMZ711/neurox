@@ -9,7 +9,7 @@ class SearchPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Search Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           children: <Widget>[
             Text("Search Page",

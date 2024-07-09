@@ -16,20 +16,27 @@ class DrillCubit extends Cubit<DrillState> {
       {this.selectedColors,
       this.selectedDirections,
       this.showWhiteScreen = false})
-      : super(DrillState(count: 0, color: Colors.black, direction: '')) {
+      : super(DrillState(
+            count: 0, color: Colors.black, direction: '', icon: null)) {
     colors = selectedColors?.map(_getColor).toList() ?? [];
   }
+
   void increment() {
     if (showWhiteScreen && !_showWhite) {
       emit(DrillState(
-          count: state.count + 1, color: Colors.white, direction: ''));
+          count: state.count + 1,
+          color: Colors.white,
+          direction: '',
+          icon: null));
       _showWhite = true;
     } else {
       String direction = '';
+      IconData? icon;
 
       if (selectedDirections != null && selectedDirections!.isNotEmpty) {
         direction =
             selectedDirections![_random.nextInt(selectedDirections!.length)];
+        icon = _getDirectionIcon(direction);
       }
 
       Color color = colors.isNotEmpty
@@ -37,81 +44,58 @@ class DrillCubit extends Cubit<DrillState> {
           : Colors.black;
 
       emit(DrillState(
-          count: state.count + 1, direction: direction, color: color));
+          count: state.count + 1,
+          direction: direction,
+          color: color,
+          icon: icon));
       _showWhite = false;
     }
   }
 
   void reset() {
-    emit(DrillState(count: 0, color: Colors.white, direction: ''));
+    emit(DrillState(count: 0, color: Colors.white, direction: '', icon: null));
+  }
+
+  Color _getColor(String colorName) {
+    switch (colorName.toLowerCase()) {
+      case 'rot':
+        return Colors.red;
+      case 'blau':
+        return Colors.blue;
+      case 'grün':
+        return Colors.green;
+      case 'gelb':
+        return Colors.yellow;
+      default:
+        try {
+          return Color(
+              int.parse(colorName.split('(0x')[1].split(')')[0], radix: 16));
+        } catch (e) {
+          return Colors.white;
+        }
+    }
+  }
+
+  IconData? _getDirectionIcon(String direction) {
+    switch (direction) {
+      case '↑':
+        return Icons.arrow_upward;
+      case '↓':
+        return Icons.arrow_downward;
+      case '←':
+        return Icons.arrow_back;
+      case '→':
+        return Icons.arrow_forward;
+      case '↖':
+        return Icons.north_west;
+      case '↗':
+        return Icons.north_east;
+      case '↙':
+        return Icons.south_west;
+      case '↘':
+        return Icons.south_east;
+      default:
+        return null;
+    }
   }
 }
-
-Color _getColor(String colorName) {
-  switch (colorName.toLowerCase()) {
-    case 'rot':
-      return Colors.red;
-    case 'blau':
-      return Colors.blue;
-    case 'grün':
-      return Colors.green;
-    case 'gelb':
-      return Colors.yellow;
-    default:
-      try {
-        return Color(
-            int.parse(colorName.split('(0x')[1].split(')')[0], radix: 16));
-      } catch (e) {
-        return Colors.white;
-      }
-  }
-}
-
-
-// Widget _getDirectionIcon(String direction) {
-//   IconData? iconData;
-//   switch (direction) {
-//     case '↑':
-//       iconData = Icons.arrow_upward;
-//       break;
-//     case '↓':
-//       iconData = Icons.arrow_downward;
-//       break;
-//     case '←':
-//       iconData = Icons.arrow_back;
-//       break;
-//     case '→':
-//       iconData = Icons.arrow_forward;
-//       break;
-//     case '↖':
-//       iconData = Icons.north_west;
-//       break;
-//     case '↗':
-//       iconData = Icons.north_east;
-//       break;
-//     case '↙':
-//       iconData = Icons.south_west;
-//       break;
-//     case '↘':
-//       iconData = Icons.south_east;
-//       break;
-//     default:
-//       try {
-//         iconData = IconData(
-//             int.parse(direction.split('(0x')[1].split(')')[0], radix: 16),
-//             fontFamily: 'MaterialIcons');
-//         return Icon(
-//           iconData,
-//           size: 100.0,
-//           color: Colors.white,
-//         );
-//       } catch (e) {
-//         return Container();
-//       }
-//   }
-//   return Icon(
-//     iconData,
-//     size: 100.0,
-//     color: Colors.white,
-//   );
-// }

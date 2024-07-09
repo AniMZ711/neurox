@@ -102,9 +102,7 @@ class DrillPage extends StatelessWidget {
                               if (timerState is TimerRunning ||
                                   _isButtonPressed) {
                                 return Container(
-                                  child: Icon(
-                                      _getDirectionIcon(state.direction),
-                                      size: 200),
+                                  child: Icon(state.icon, size: 200),
                                 );
                               } else {
                                 return Column(
@@ -119,7 +117,7 @@ class DrillPage extends StatelessWidget {
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.grey,
-                                          shape: StadiumBorder(),
+                                          shape: const StadiumBorder(),
                                         ),
                                         onPressed: () {
                                           _isButtonPressed = true;
@@ -142,28 +140,5 @@ class DrillPage extends StatelessWidget {
         ),
       );
     });
-  }
-}
-
-IconData? _getDirectionIcon(String direction) {
-  switch (direction) {
-    case '↑':
-      return Icons.arrow_upward;
-    case '↓':
-      return Icons.arrow_downward;
-    case '←':
-      return Icons.arrow_back;
-    case '→':
-      return Icons.arrow_forward;
-    case '↖':
-      return Icons.north_west;
-    case '↗':
-      return Icons.north_east;
-    case '↙':
-      return Icons.south_west;
-    case '↘':
-      return Icons.south_east;
-    default:
-      return null;
   }
 }

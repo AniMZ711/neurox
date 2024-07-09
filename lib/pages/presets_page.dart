@@ -33,13 +33,12 @@ class _PresetsPageState extends State<PresetsPage> {
         prefs.remove('preset_$presetName');
       });
 
-      // Show Snackbar with Undo option
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('$presetName gelöscht'),
           behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.all(10.0),
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          margin: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
@@ -82,7 +81,7 @@ class _PresetsPageState extends State<PresetsPage> {
             title: Text(presetName),
             onTap: () => _loadPreset(presetName),
             trailing: IconButton(
-              icon: Icon(Icons.delete),
+              icon: const Icon(Icons.delete),
               onPressed: () => _deletePreset(presetName),
             ),
           );

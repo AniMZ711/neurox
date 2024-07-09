@@ -31,7 +31,7 @@ class GameCard extends StatelessWidget {
             height: 60,
             fit: BoxFit.contain,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             title.toUpperCase(),
             style: const TextStyle(

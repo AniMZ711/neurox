@@ -28,12 +28,6 @@ class _HomePageState extends State<HomePage> {
     SettingsPage(),
   ];
 
-  void _onDestinationSelected(int index) {
-    setState(() {
-      currentPageIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,22 +44,21 @@ class _HomePageState extends State<HomePage> {
           ])),
       body: Stack(
         children: [
-          StandardBackground(child: Container()), // Background layer
+          StandardBackground(child: Container()),
           SafeArea(
             child: Center(
               child: Column(
                 children: <Widget>[
-                  const SizedBox(height: 80), // Add space for AppBar
+                  const SizedBox(height: 80),
                   const Text(
                     "Let's start training!",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.normal,
-                      color:
-                          Colors.white, // Ensure text is visible on background
+                      color: Colors.white,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 50,
                   ),
                   GestureDetector(
@@ -74,12 +67,10 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: GameCard(title: "Drill Generator"),
                   ),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     _navigateToGameSettings(context, "Reaction");
-                  //   },
-                  //   child: GameCard(title: "Reaction"),
-                  // ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  GameCard(title: "another game "),
                 ],
               ),
             ),
