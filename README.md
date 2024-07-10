@@ -25,7 +25,15 @@ Please note that this app is in an early, unstable version. Currently, it only o
 
 ![UI](Screens.png)
 
-
 ## Language
 
 Please note that the app is currently available only in German.
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+- Your Name - [anika.menz@study.thws.de](mailto:anika.menz@study.thws.de)
+- GitHub: [AniMZ711](https://github.com/AniMZ711)
