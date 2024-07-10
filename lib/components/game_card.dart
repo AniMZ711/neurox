@@ -25,11 +25,8 @@ class GameCard extends StatelessWidget {
           child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Image.network(
-            'https://cdn-icons-png.flaticon.com/512/53/53286.png',
-            width: 60,
-            height: 60,
-            fit: BoxFit.contain,
+          Flexible(
+            child: Image.asset("assets/drill.png"),
           ),
           const SizedBox(height: 10),
           Text(

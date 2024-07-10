@@ -1,3 +1,3 @@
-# neurox
+# Neurox
 
 A new Flutter project.

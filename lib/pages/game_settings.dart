@@ -16,7 +16,6 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   List<String> colors = ['Rot', 'Blau', 'Grün', 'Gelb'];
   List<String> directions = ['↑', '↓', '←', '→', '↖', '↗', '↙', '↘'];
-  // default values for interval and duration
   Duration interval = const Duration(seconds: 1);
   Duration duration = const Duration(seconds: 10);
   List<String> selectedColors = [];
@@ -130,6 +129,29 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  IconData _getDirectionIcon(String direction) {
+    switch (direction) {
+      case '↑':
+        return Icons.arrow_upward;
+      case '↓':
+        return Icons.arrow_downward;
+      case '←':
+        return Icons.arrow_back;
+      case '→':
+        return Icons.arrow_forward;
+      case '↖':
+        return Icons.north_west;
+      case '↗':
+        return Icons.north_east;
+      case '↙':
+        return Icons.south_west;
+      case '↘':
+        return Icons.south_east;
+      default:
+        return Icons.help_outline; // Fallback icon
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,6 +205,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 const Text("Generiere individuelle Drill-Übungen"),
                 const SizedBox(height: 20),
                 const Text('Farben auswählen:'),
+                const SizedBox(height: 10),
                 Wrap(
                   spacing: 0.0,
                   runSpacing: 2.0,
@@ -208,6 +231,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 const SizedBox(height: 20),
                 const Text('Pfeilrichtungen auswählen:'),
+                const SizedBox(height: 10),
                 Column(
                   children: <Widget>[
                     Wrap(
@@ -218,7 +242,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         return SizedBox(
                           width: MediaQuery.of(context).size.width / 4 - 8,
                           child: FilterChip(
-                            label: Text(direction),
+                            label: Icon(
+                              _getDirectionIcon(direction),
+                              size: 20,
+                            ),
                             selected: selectedDirections.contains(direction),
                             onSelected: (bool selected) {
                               setState(() {
