@@ -21,7 +21,7 @@ Please note that this app is in an early, unstable version. Currently, it only o
 - Save and load presets
 - Responsive UI
 
-## Screenshot
+## Screens Overview
 
 ![UI](Screens.png)
 
