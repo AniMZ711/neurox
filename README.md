@@ -32,5 +32,5 @@ Please note that the app is currently available only in German.
 
 ## Contact
 
-- Your Name - [anika.menz@study.thws.de](mailto:anika.menz@study.thws.de)
-- GitHub: [AniMZ711](https://github.com/AniMZ711)
+[anika.menz@study.thws.de](mailto:anika.menz@study.thws.de)
+[AniMZ711](https://github.com/AniMZ711)
